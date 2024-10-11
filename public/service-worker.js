@@ -1,7 +1,12 @@
-const CACHE_NAME = "recipe-cache-v1";
-const urlsToCache = ["https://dummyjson.com/recipes?select=name"];
+const CACHE_NAME = "recipe-cache-v3";
+const urlsToCache = [
+  "/index.html", // Cache the main page
+  "/static/css/main.css", // Cache your CSS file
+  // Include other assets like images, icons, fonts if needed
+  // "/static/js/main.js",
+];
 
-// Install event - Cache the recipe API URLs
+// Install event - Cache the necessary resources
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -11,41 +16,21 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Fetch event - Use cache-first strategy to reduce network usage
+// Fetch event - Serve cached resources
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
-      // Serve the cached response immediately if available
       if (cachedResponse) {
         return cachedResponse;
       }
-
-      // Fetch from network and cache if not cached already
-      return fetch(event.request).then((networkResponse) => {
+      return fetch(event.request).then((response) => {
         return caches.open(CACHE_NAME).then((cache) => {
-          // Do not cache non-GET requests (e.g., POST requests)
           if (event.request.method === "GET") {
-            cache.put(event.request, networkResponse.clone()); // Cache the new response
+            cache.put(event.request, response.clone());
           }
-          return networkResponse; // Return the network response
+          return response;
         });
       });
-    })
-  );
-});
-
-// Activate event - Remove old caches
-self.addEventListener("activate", (event) => {
-  const cacheWhitelist = [CACHE_NAME]; // Only keep the current cache
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (!cacheWhitelist.includes(cacheName)) {
-            return caches.delete(cacheName); // Delete old caches
-          }
-        })
-      );
     })
   );
 });

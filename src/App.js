@@ -4,33 +4,23 @@ import "./App.css";
 function App() {
   const [recipes, setRecipes] = useState([]);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // To manage loading state
+  const [isLoading, setIsLoading] = useState(true); // Loading state for recipes
 
-  // Fetch the recipe list only once when the component mounts
+  // Fetch recipe names once the component mounts
   useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-
     fetch("https://dummyjson.com/recipes?select=name")
       .then((response) => response.json())
       .then((data) => {
-        if (isMounted) {
-          setRecipes(data.recipes);
-          setIsLoading(false); // Data fetching complete
-        }
+        setRecipes(data.recipes); // Set the recipes data
+        setIsLoading(false); // Stop loading once data is fetched
       })
       .catch((error) => {
         console.error("Error fetching recipes:", error);
-        setIsLoading(false); // Handle error
+        setIsLoading(false); // Stop loading even on error
       });
+  }, []); // Run once on mount
 
-    // Cleanup function to prevent setting state if component unmounts
-    return () => {
-      isMounted = false;
-    };
-  }, []); // Empty dependency array ensures this runs only once
-
-  // Handle the selection of a recipe
+  // Handle the selection of a recipe from the dropdown
   const handleRecipeChange = (event) => {
     const recipeId = event.target.value;
     fetch(`https://dummyjson.com/recipes/${recipeId}`)
@@ -41,50 +31,44 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <h1>Recipe App</h1>
+      <h1>Recipe App</h1>
 
-        {/* Dropdown to select a recipe */}
-        {isLoading ? (
-          <p>Loading recipes...</p>
-        ) : (
-          <select
-            onChange={handleRecipeChange}
-            defaultValue=""
-            className="recipe-select"
-          >
-            <option value="" disabled>
-              Select a recipe
+      {/* Display a loading message until recipes are fetched */}
+      {isLoading ? (
+        <p>Loading recipes...</p>
+      ) : (
+        <select
+          className="recipe-select"
+          defaultValue=""
+          onChange={handleRecipeChange}
+        >
+          <option value="" disabled>
+            Select a recipe
+          </option>
+          {recipes.map((recipe) => (
+            <option key={recipe.id} value={recipe.id}>
+              {recipe.name}
             </option>
-            {recipes.length > 0 ? (
-              recipes.map((recipe) => (
-                <option key={recipe.id} value={recipe.id}>
-                  {recipe.name}
-                </option>
-              ))
-            ) : (
-              <option disabled>No recipes available</option>
-            )}
-          </select>
-        )}
+          ))}
+        </select>
+      )}
 
-        {/* Display selected recipe details */}
-        {selectedRecipe && (
-          <div className="recipe-details">
-            <h2>{selectedRecipe.name}</h2>
-            <p>
-              <strong>Ingredients:</strong>{" "}
-              {selectedRecipe.ingredients.join(", ")}
-            </p>
-            <p>
-              <strong>Instructions:</strong> {selectedRecipe.instructions}
-            </p>
-            <p>
-              <strong>Difficulty:</strong> {selectedRecipe.difficulty}
-            </p>
-          </div>
-        )}
-      </header>
+      {/* Display the recipe details once a recipe is selected */}
+      {selectedRecipe && (
+        <div className="recipe-details">
+          <h2>{selectedRecipe.name}</h2>
+          <p>
+            <strong>Ingredients:</strong>{" "}
+            {selectedRecipe.ingredients.join(", ")}
+          </p>
+          <p>
+            <strong>Instructions:</strong> {selectedRecipe.instructions}
+          </p>
+          <p>
+            <strong>Difficulty:</strong> {selectedRecipe.difficulty}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

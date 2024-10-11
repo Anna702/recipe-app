@@ -1,4 +1,21 @@
-/* App.css */
+/* General App container styling */
+.App {
+  display: flex; /* Use Flexbox for layout */
+  flex-direction: column; /* Align items in a column */
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
+  height: 100vh; /* Full viewport height */
+  text-align: center; /* Center text */
+  background: linear-gradient(
+    135deg,
+    #f0f4c3,
+    #c8e6c9
+  ); /* Gradient background */
+  background-size: cover;
+  background-position: center;
+  color: #333;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
 
 /* Dropdown (select) styling */
 .recipe-select {
@@ -11,6 +28,8 @@
   background-color: white; /* Background color */
   color: #000; /* Text color */
   transition: border-color 0.2s ease; /* Smooth transition for border on focus/hover */
+  margin-top: 20px; /* Add space between elements */
+  min-height: 40px; /* Set a minimum height to prevent resizing */
 }
 
 .recipe-select:hover,
@@ -21,9 +40,12 @@
 
 /* Recipe details section */
 .recipe-details {
-  margin-top: 20px;
-  text-align: left;
-  background-color: #f9f9f9;
+  margin-top: 20px; /* Add space between dropdown and details */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  text-align: center;
+  background-color: #ffffff;
   padding: 20px;
   border-radius: 8px;
   width: 80%;
@@ -35,7 +57,7 @@
 .recipe-details h2 {
   font-size: 24px;
   margin-bottom: 10px;
-  color: #007bff;
+  color: #1c8604;
 }
 
 .recipe-details p {
